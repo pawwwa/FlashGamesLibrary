@@ -1,0 +1,416 @@
+﻿<mah:MetroWindow x:Class="GameLibFinal.MainWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:local="clr-namespace:GameLibFinal"
+                 xmlns:res="clr-namespace:GameLibFinal.Properties"
+                 xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                 xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+                 xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+                 xmlns:Child="clr-namespace:MahApps.Metro.SimpleChildWindow;assembly=MahApps.Metro.SimpleChildWindow"
+                 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                 xmlns:conv="clr-namespace:GameLibFinal.Model"
+                 Title="GameLibrary"
+                 Height="600"
+                 Width="1200"
+                 MinHeight="500"
+                 MinWidth="1000"
+                 WindowStartupLocation="CenterScreen"
+                 Dialog:DialogParticipation.Register="{Binding}"
+                 Closing="MetroWindow_Closing">
+
+    <mah:MetroWindow.Resources>
+        <conv:UriToCachedImageConverter x:Key="convert"></conv:UriToCachedImageConverter>
+    </mah:MetroWindow.Resources>
+
+    <mah:MetroWindow.LeftWindowCommands>
+        <mah:WindowCommands>
+            <Button Command="{Binding Path=SettingButtonOpenContextMenu}">
+                <iconPacks:PackIconModern Width="22"
+                                          Height="22"
+                                          Kind="Settings" />
+
+                <Button.ContextMenu>
+                    <ContextMenu IsOpen="{Binding Path=IsContextMenuEnabled}">
+                        <MenuItem Header="{x:Static res:Resources.ChangeThemeLabel}"
+                                  Command="{Binding Path=OpenThemePicker}">
+                        </MenuItem>
+                        <MenuItem Header="{x:Static res:Resources.ChangeLanguageLabel}"
+                                  Command="{Binding Path=OpenLanguagePicker}">
+
+                        </MenuItem>
+                    </ContextMenu>
+                </Button.ContextMenu>
+            </Button>
+        </mah:WindowCommands>
+    </mah:MetroWindow.LeftWindowCommands>
+
+    <mah:MetroWindow.Flyouts>
+        <mah:FlyoutsControl>
+            <mah:Flyout IsOpen="{Binding Path=IsThemePickerOpen}"
+                        Width="300"
+                        Position="Right"
+                        Header="{x:Static res:Resources.ChangeThemeLabel}"
+                        Theme="Inverse">
+                <Grid>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <ListBox ItemsSource="{Binding Path=SideColors}"
+                             SelectedValue="{Binding Path=SideColorChosen}"></ListBox>
+                    <ListBox ItemsSource="{Binding Path=MainColors}"
+                             Grid.Column="1"
+                             SelectedValue="{Binding Path=MainColorChosen}"></ListBox>
+
+                </Grid>
+            </mah:Flyout>
+
+            <mah:Flyout IsOpen="{Binding Path=IsLanguagePickerOpen}"
+                        Width="300"
+                        Position="Right"
+                        Header="{x:Static res:Resources.ChangeLanguageLabel}"
+                        Theme="Inverse">
+                <StackPanel>
+                    <Button Content="{x:Static res:Resources.LanguageEng}"
+                            FontSize="24"
+                            Command="{Binding Path=ChangeLanguageENG}"></Button>
+                    <Button Content="{x:Static res:Resources.LanguageRus}"
+                            FontSize="24"
+                            Command="{Binding Path=ChangeLanguageRUS}"></Button>
+                </StackPanel>
+            </mah:Flyout>
+
+        </mah:FlyoutsControl>
+    </mah:MetroWindow.Flyouts>
+
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="70*" />
+                    <ColumnDefinition Width="651*" />
+                    <ColumnDefinition Width="196*" />
+                    <ColumnDefinition Width="275*" />
+                </Grid.ColumnDefinitions>
+
+
+                <iconPacks:PackIconModern Kind="SortAlphabetical"
+                                          HorizontalAlignment="Center"
+                                          Margin="5"
+                                          Width="Auto"
+                                          Height="Auto"
+                                          VerticalAlignment="Center">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDown">
+                            <i:InvokeCommandAction Command="{Binding Path=Sort}">
+
+                            </i:InvokeCommandAction>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+
+                </iconPacks:PackIconModern>
+                <Slider Margin="20,0,20,0"
+                        Minimum="200"
+                        Grid.Column="1"
+                        Maximum="400"
+                        Value="{Binding Path=ListViewSize, UpdateSourceTrigger=PropertyChanged}">
+
+                </Slider>
+
+                <Button Grid.Column="2"
+                        Margin="7"
+                        Style="{StaticResource MahApps.Styles.Button.Square.Accent}"
+                        FontSize="24"
+                        Command="{Binding Path=OpenGameAddView}"
+                        Content="{x:Static res:Resources.AddGameButton }">
+                </Button>
+
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="0.3*" />
+                </Grid.ColumnDefinitions>
+
+                <ListBox ItemsSource="{Binding Path=Games}"
+                         SelectedItem="{Binding Path=CurrentGame}"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="Black"
+                                    BorderThickness="5">
+                                <Grid Margin="15"
+                                      VerticalAlignment="Center"
+                                      HorizontalAlignment="Center"
+                                      Tag="{Binding Path=ExecutableUri}">
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+
+                                    <Image Height="{Binding Path=ImageViewSize}"
+                                           Width="{Binding Path=ImageViewSize}"
+                                           Source="{Binding Path=ImageUri, Converter={StaticResource convert}}">
+                                    </Image>
+
+                                    <TextBlock HorizontalAlignment="Center"
+                                               FontSize="22"
+                                               Text="{Binding Path=Name}"
+                                               Grid.Row="1">
+
+                                    </TextBlock>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel ItemHeight="{Binding Path=ListViewSize}"
+                                       ItemWidth="{Binding Path=ListViewSize}"
+                                       Orientation="Horizontal"
+                                       IsItemsHost="True">
+
+                            </WrapPanel>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                </ListBox>
+
+                <Grid Grid.Column="1">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition  Height="0.3*" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBox HorizontalAlignment="Center"
+                                 FontSize="24"
+                                 Text="{Binding Path=CurrentGame.Name, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                        <Image Grid.Row="1"
+                               Source="{Binding Path=CurrentGame.ImageUri, UpdateSourceTrigger=PropertyChanged, 
+                                        Converter={StaticResource convert}}">
+
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDown">
+                                    <i:InvokeCommandAction Command="{Binding Path=EditImage}">
+
+                                    </i:InvokeCommandAction>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </Image>
+                    </Grid>
+
+                    <Grid Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition  Height="0.3*" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock HorizontalAlignment="Center"
+                                   FontSize="22"
+                                   Text="{x:Static res:Resources.CurrentGameDescription}"></TextBlock>
+
+                        <TextBox Grid.Row="1"
+                                 Text="{Binding Path=CurrentGame.Description, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+
+                    </Grid>
+
+                    <Grid Grid.Row="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Button FontSize="24"
+                                Content="{x:Static res:Resources.RunGameButton}"
+                                Background="LightGreen"
+                                Command="{Binding Path=RunGame}"></Button>
+
+                        <Button FontSize="24"
+                                Grid.Row="1"
+                                Content="{x:Static res:Resources.DeleteGameButton}"
+                                Background="Red"
+                                Command="{Binding Path=DeleteGame}"></Button>
+
+                    </Grid>
+                </Grid>
+            </Grid>
+
+
+        </Grid>
+        <Child:ChildWindow IsOpen="{Binding Path=IsGameAddViewOpen}"
+                           HorizontalContentAlignment="Stretch"
+                           VerticalContentAlignment="Stretch"
+                           Padding="15"
+                           ChildWindowImage="None"
+                           Title="{x:Static res:Resources.AddGameTitle}"
+                           ShowCloseButton="True">
+            <Grid>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="0.8*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.5*" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="46*" />
+                                <RowDefinition Height="237*" />
+                            </Grid.RowDefinitions>
+                            <TextBox FontSize="24"
+                                     Text="{Binding Path=GameName}"
+                                     TextAlignment="Center"
+                                     VerticalAlignment="Top"
+                                     Margin="5,5,5,0"
+                                     Height="42"
+                                     Grid.RowSpan="2">
+
+                            </TextBox>
+                            <Image VerticalAlignment="Stretch"
+                                   Grid.Row="1"
+                                   Source="{Binding Path=GameImage,  Converter={StaticResource convert}}"
+                                   Margin="94,0,93,0" />
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDown">
+                                    <i:InvokeCommandAction Command="{Binding Path=SelectImage}">
+
+                                    </i:InvokeCommandAction>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </Grid>
+
+                        <Grid Grid.Column="1"
+                              Margin="100,0,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="0.4*" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Margin="10"
+                                           FontSize="24"
+                                           TextAlignment="Justify"
+                                           VerticalAlignment="Center"
+                                           Text="{x:Static res:Resources.AddGameEnterType}"></TextBlock>
+                                <ComboBox Margin="10"
+                                          Width="150"
+                                          FontSize="22"
+                                          VerticalAlignment="Center"
+                                          ItemsSource="{Binding Path=PossibleTypes}"
+                                          SelectedItem="{Binding Path=SelectedType}">
+
+                                </ComboBox>
+                                <TextBlock Margin="10"
+                                           FontSize="24"
+                                           TextAlignment="Justify"
+                                           VerticalAlignment="Center"
+                                           Foreground="Gray"
+                                           Text="{Binding Path=TypeHelpString}">
+                                </TextBlock>
+                            </StackPanel>
+                            <Grid Grid.Row="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="0.4*" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="{x:Static res:Resources.AddGameEnterDescription}"
+                                           FontSize="24"
+                                           Margin="10">
+
+                                </TextBlock>
+                                <TextBox Margin="10"
+                                         Grid.Row="1"
+                                         FontSize="22"
+                                         TextWrapping="Wrap"
+                                         VerticalScrollBarVisibility="Visible"
+                                         Text="{Binding Path=GameDescription}">
+
+                                </TextBox>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid Grid.Row="1">
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="0.4*" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.5*" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+
+                            </Grid>
+
+
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition  Width="0.4*" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Button FontSize="24"
+                                        Margin="10"
+                                        VerticalAlignment="Center"
+                                        Content="{x:Static res:Resources.AddGameChooseFile}"
+                                        Command="{Binding Path=ChooseFile}">
+
+                                </Button>
+                                <TextBlock Margin="10,23,10,7"
+                                           Grid.Column="1"
+                                           FontSize="22"
+                                           Height="46"
+                                           VerticalAlignment="Center"
+                                           TextAlignment="Left"
+                                           Foreground="Gray"
+                                           Text="{Binding Path=ExecutableUri}">
+
+                                </TextBlock>
+                            </Grid>
+                            <Button Grid.Row="2"
+                                    Content="{x:Static res:Resources.AddGameFinish}"
+                                    IsEnabled="{Binding Path=IsFinishReady}"
+                                    FontSize="24"
+                                    Margin="10"
+                                    Width="200"
+                                    Command="{Binding Path=FinishGameAdd}"></Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Child:ChildWindow>
+    </Grid>
+</mah:MetroWindow>
